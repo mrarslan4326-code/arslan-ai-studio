@@ -1,89 +1,201 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Arslan AI Studio</title>
-  <style>
-    * { box-sizing: border-box; }
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #0b1020;
-      color: white;
-    }
-    header {
-      padding: 22px 8%;
-      background: #111a30;
-      border-bottom: 1px solid #293653;
-    }
-    h1 { margin: 0; color: #65d9ff; }
-    main {
-      max-width: 850px;
-      margin: 55px auto;
-      padding: 25px;
-    }
-    .panel {
-      background: #151f38;
-      padding: 30px;
-      border-radius: 16px;
-      border: 1px solid #293653;
-    }
-    textarea {
-      width: 100%;
-      min-height: 130px;
-      padding: 15px;
-      border-radius: 10px;
-      border: 1px solid #53617c;
-      background: #0b1020;
-      color: white;
-      font-size: 16px;
-      resize: vertical;
-    }
-    button {
-      margin-top: 15px;
-      padding: 14px 24px;
-      background: #13bde8;
-      color: #07111e;
-      border: 0;
-      border-radius: 9px;
-      font-weight: bold;
-      cursor: pointer;
-    }
-    #result { margin-top: 20px; color: #cbd5e1; }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Arslan AI Studio</title>
+<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+
+<style>
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:Arial,sans-serif;
+  background:#080d19;
+  color:white;
+  min-height:100vh;
+}
+header{
+  padding:24px 8%;
+  border-bottom:1px solid #263149;
+  font-size:24px;
+  font-weight:bold;
+  color:#60a5fa;
+}
+main{
+  max-width:850px;
+  margin:65px auto;
+  padding:25px;
+}
+h1{font-size:42px;text-align:center}
+.subtitle{text-align:center;color:#aab6cc;line-height:1.6}
+.panel{
+  margin-top:35px;
+  padding:28px;
+  background:#111a2d;
+  border:1px solid #263b5e;
+  border-radius:16px;
+}
+label{display:block;margin-bottom:12px;font-weight:bold}
+textarea{
+  width:100%;
+  min-height:120px;
+  padding:16px;
+  border-radius:10px;
+  border:1px solid #394b68;
+  background:#080d19;
+  color:white;
+  font-size:16px;
+  resize:vertical;
+}
+button{
+  width:100%;
+  margin-top:20px;
+  padding:16px;
+  border:0;
+  border-radius:10px;
+  background:#2563eb;
+  color:white;
+  font-size:17px;
+  font-weight:bold;
+  cursor:pointer;
+}
+button:disabled{opacity:.5;cursor:not-allowed}
+#status{margin-top:18px;color:#fbbf24}
+#result{
+  margin-top:25px;
+  padding:20px;
+  background:#080d19;
+  border-radius:10px;
+  white-space:pre-wrap;
+  line-height:1.7;
+  overflow-wrap:anywhere;
+}
+.counter{
+  text-align:center;
+  margin:18px 0;
+  color:#86efac;
+  font-weight:bold;
+}
+footer{text-align:center;color:#718096;padding:30px}
+</style>
 </head>
+
 <body>
-  <header>
-    <h1>Arslan AI Studio</h1>
-    <p>Your AI YouTube Content Assistant</p>
-  </header>
 
-  <main>
-    <div class="panel">
-      <h2>Create YouTube Content with AI</h2>
-      <p>Enter your video topic below:</p>
-      <textarea id="topic" placeholder="Example: Funny AI Cat Cartoon"></textarea>
-      <br>
-      <button onclick="generateContent()">Generate Content</button>
-      <div id="result"></div>
-    </div>
-  </main>
+<header>⚡ ARSLAN AI STUDIO</header>
 
-  <script>
-    function generateContent() {
-      const topic = document.getElementById("topic").value.trim();
-      const result = document.getElementById("result");
+<main>
+<h1>Your AI YouTube Assistant</h1>
+<p class="subtitle">
+Create YouTube titles, scripts, descriptions, tags and thumbnail prompts with AI.
+</p>
 
-      if (!topic) {
-        result.textContent = "Please enter a YouTube topic first.";
-        return;
-      }
+<div class="panel">
+<label for="topic">Enter Your YouTube Video Topic</label>
 
-      result.textContent =
-        "Your topic: " + topic +
-        " — Website design is ready. AI connection will be added next!";
+<textarea id="topic" placeholder="Example: Funny AI Cat Cartoon"></textarea>
+
+<div class="counter" id="counter">Daily free generations: 3</div>
+
+<div class="cf-turnstile"
+data-sitekey="PASTE_YOUR_SITE_KEY_HERE"
+data-callback="turnstileSuccess"
+data-expired-callback="turnstileExpired">
+</div>
+
+<button id="generate" onclick="generateContent()" disabled>
+Verify security first
+</button>
+
+<p id="status"></p>
+<div id="result"></div>
+</div>
+</main>
+
+<footer>© 2026 Arslan AI Studio</footer>
+
+<script>
+const WORKER_URL =
+"https://arslan-ai-proxy.mr-arslan4326.workers.dev/";
+
+let turnstileToken = "";
+
+function turnstileSuccess(token){
+  turnstileToken = token;
+  document.getElementById("generate").disabled = false;
+  document.getElementById("generate").textContent = "Generate AI Content";
+}
+
+function turnstileExpired(){
+  turnstileToken = "";
+  document.getElementById("generate").disabled = true;
+  document.getElementById("generate").textContent = "Verify security first";
+}
+
+async function generateContent(){
+  const topic = document.getElementById("topic").value.trim();
+  const status = document.getElementById("status");
+  const result = document.getElementById("result");
+  const button = document.getElementById("generate");
+
+  if(!topic){
+    status.textContent = "Please enter your video topic.";
+    return;
+  }
+
+  if(!turnstileToken){
+    status.textContent = "Please complete security verification.";
+    return;
+  }
+
+  button.disabled = true;
+  status.textContent = "AI is creating your content...";
+  result.textContent = "";
+
+  try{
+    const response = await fetch(WORKER_URL,{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({
+        topic:topic,
+        turnstileToken:turnstileToken
+      })
+    });
+
+    const data = await response.json();
+
+    if(response.status === 429){
+      status.textContent = data.message || "Daily limit reached.";
+      document.getElementById("counter").textContent =
+        "Daily free generations: 0";
+      return;
     }
-  </script>
+
+    if(!response.ok){
+      throw new Error(data.error || "Something went wrong.");
+    }
+
+    result.textContent =
+      data.result || JSON.stringify(data,null,2);
+
+    document.getElementById("counter").textContent =
+      "Remaining generations today: " + data.remaining;
+
+    status.textContent = "Your AI content is ready!";
+
+  }catch(error){
+    status.textContent = error.message;
+  }finally{
+    turnstileToken = "";
+    if(window.turnstile){
+      turnstile.reset();
+    }
+    button.disabled = true;
+    button.textContent = "Verify security first";
+  }
+}
+</script>
+
 </body>
 </html>
