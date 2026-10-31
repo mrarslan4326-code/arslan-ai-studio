@@ -1,1 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Arslan AI Studio</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #0b1020;
+      color: white;
+    }
+    header {
+      padding: 22px 8%;
+      background: #111a30;
+      border-bottom: 1px solid #293653;
+    }
+    h1 { margin: 0; color: #65d9ff; }
+    main {
+      max-width: 850px;
+      margin: 55px auto;
+      padding: 25px;
+    }
+    .panel {
+      background: #151f38;
+      padding: 30px;
+      border-radius: 16px;
+      border: 1px solid #293653;
+    }
+    textarea {
+      width: 100%;
+      min-height: 130px;
+      padding: 15px;
+      border-radius: 10px;
+      border: 1px solid #53617c;
+      background: #0b1020;
+      color: white;
+      font-size: 16px;
+      resize: vertical;
+    }
+    button {
+      margin-top: 15px;
+      padding: 14px 24px;
+      background: #13bde8;
+      color: #07111e;
+      border: 0;
+      border-radius: 9px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    #result { margin-top: 20px; color: #cbd5e1; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Arslan AI Studio</h1>
+    <p>Your AI YouTube Content Assistant</p>
+  </header>
 
+  <main>
+    <div class="panel">
+      <h2>Create YouTube Content with AI</h2>
+      <p>Enter your video topic below:</p>
+      <textarea id="topic" placeholder="Example: Funny AI Cat Cartoon"></textarea>
+      <br>
+      <button onclick="generateContent()">Generate Content</button>
+      <div id="result"></div>
+    </div>
+  </main>
+
+  <script>
+    function generateContent() {
+      const topic = document.getElementById("topic").value.trim();
+      const result = document.getElementById("result");
+
+      if (!topic) {
+        result.textContent = "Please enter a YouTube topic first.";
+        return;
+      }
+
+      result.textContent =
+        "Your topic: " + topic +
+        " — Website design is ready. AI connection will be added next!";
+    }
+  </script>
+</body>
+</html>
